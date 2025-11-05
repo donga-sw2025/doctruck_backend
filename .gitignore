@@ -77,6 +77,8 @@ celerybeat-schedule
 
 # dotenv
 .env
+.env.production
+.env.*.local
 
 # virtualenv
 venv/
@@ -87,3 +89,30 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Database
+db/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Deployment
+doctruck_backend.tar.gz
+nginx/ssl/

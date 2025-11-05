@@ -1,0 +1,38 @@
+# Production Dockerfile
+FROM python:3.8-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+RUN mkdir /code
+WORKDIR /code
+
+# Copy requirements first for better caching
+COPY requirements.txt setup.py tox.ini ./
+
+# Upgrade pip and install dependencies
+RUN pip install --no-cache-dir -U pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -e .
+
+# Copy application code
+COPY doctruck_backend doctruck_backend/
+
+# Create non-root user for security
+RUN useradd -m -u 1000 appuser && \
+    chown -R appuser:appuser /code
+
+# Create directories for logs and db
+RUN mkdir -p /logs /db && \
+    chown -R appuser:appuser /logs /db
+
+USER appuser
+
+EXPOSE 5000
+
+# Default command (can be overridden in docker-compose)
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "-w", "4", "doctruck_backend.wsgi:app"]
