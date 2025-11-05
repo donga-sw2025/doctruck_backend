@@ -57,7 +57,7 @@ jobs:
           CELERY_RESULT_BACKEND_URL: redis://localhost:6379
           FLASK_ENV: testing
         run: |
-          pytest tests/ -v
+          tox -e test
 
   build-and-deploy:
     runs-on: ubuntu-latest
