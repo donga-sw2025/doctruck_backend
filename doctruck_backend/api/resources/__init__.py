@@ -6,40 +6,48 @@ from doctruck_backend.api.resources.admin_document import (
     AdminDocumentPending,
     AdminDocumentVerify,
     AdminDocumentList,
-    AdminDocumentResource
+    AdminDocumentResource,
 )
 from doctruck_backend.api.resources.admin_location import (
     AdminLocationList,
-    AdminLocationResource
+    AdminLocationResource,
 )
-from doctruck_backend.api.resources.admin_user import (
-    AdminUserList,
-    AdminUserResource
-)
+from doctruck_backend.api.resources.admin_user import AdminUserList, AdminUserResource
 from doctruck_backend.api.resources.admin_document_location import (
     AdminDocumentLocationConnect,
-    AdminDocumentLocationList
+    AdminDocumentLocationList,
 )
 from doctruck_backend.api.resources.food_truck_location import (
     LocationInterest,
-    MyLocationInterests
+    MyLocationInterests,
 )
 from doctruck_backend.api.resources.recommendation import (
     RecommendedLocations,
-    RecommendedDocuments
+    RecommendedDocuments,
 )
 
 
 __all__ = [
-    "UserResource", "UserList",
-    "FoodTruckResource", "FoodTruckList",
-    "LocationResource", "LocationList",
-    "DocumentResource", "DocumentList",
-    "AdminDocumentPending", "AdminDocumentVerify",
-    "AdminDocumentList", "AdminDocumentResource",
-    "AdminLocationList", "AdminLocationResource",
-    "AdminUserList", "AdminUserResource",
-    "AdminDocumentLocationConnect", "AdminDocumentLocationList",
-    "LocationInterest", "MyLocationInterests",
-    "RecommendedLocations", "RecommendedDocuments"
+    "UserResource",
+    "UserList",
+    "FoodTruckResource",
+    "FoodTruckList",
+    "LocationResource",
+    "LocationList",
+    "DocumentResource",
+    "DocumentList",
+    "AdminDocumentPending",
+    "AdminDocumentVerify",
+    "AdminDocumentList",
+    "AdminDocumentResource",
+    "AdminLocationList",
+    "AdminLocationResource",
+    "AdminUserList",
+    "AdminUserResource",
+    "AdminDocumentLocationConnect",
+    "AdminDocumentLocationList",
+    "LocationInterest",
+    "MyLocationInterests",
+    "RecommendedLocations",
+    "RecommendedDocuments",
 ]

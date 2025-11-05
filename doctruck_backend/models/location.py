@@ -6,6 +6,7 @@ from doctruck_backend.extensions import db
 
 class LocationType(enum.Enum):
     """위치 유형 - Spring의 enum과 동일한 개념"""
+
     FESTIVAL = "FESTIVAL"  # 축제
     PARK = "PARK"  # 공원
     MARKET = "MARKET"  # 시장
@@ -22,11 +23,11 @@ class Location(db.Model):
     location_id = db.Column(db.BigInteger, primary_key=True)
 
     # 위치 기본 정보
-    location_name = db.Column(db.String(255), nullable=False)  # 위치 이름 (예: '여의도 한강공원')
+    location_name = db.Column(
+        db.String(255), nullable=False
+    )  # 위치 이름 (예: '여의도 한강공원')
     location_type = db.Column(
-        db.Enum(LocationType),
-        nullable=False,
-        default=LocationType.OTHER
+        db.Enum(LocationType), nullable=False, default=LocationType.OTHER
     )  # 위치 유형
     address = db.Column(db.String(255), nullable=True)  # 주소
 
@@ -50,7 +51,7 @@ class Location(db.Model):
         "DocumentLocation",
         back_populates="location",
         lazy="dynamic",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     # FoodTruck과의 관계 (N:M) - FoodTruckLocation을 통해 연결
@@ -58,7 +59,7 @@ class Location(db.Model):
         "FoodTruckLocation",
         back_populates="location",
         lazy="dynamic",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):

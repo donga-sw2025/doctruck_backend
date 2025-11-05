@@ -96,13 +96,12 @@ class AdminDocumentLocationConnect(Resource):
     def post(self, doc_id, location_id):
         """공문서-위치 연결 (관리자용)"""
         # 문서와 위치 존재 확인
-        document = Document.query.get_or_404(doc_id)
-        location = Location.query.get_or_404(location_id)
+        Document.query.get_or_404(doc_id)
+        Location.query.get_or_404(location_id)
 
         # 이미 연결되어 있는지 확인
         existing = DocumentLocation.query.filter_by(
-            doc_id=doc_id,
-            location_id=location_id
+            doc_id=doc_id, location_id=location_id
         ).first()
 
         if existing:
@@ -115,14 +114,13 @@ class AdminDocumentLocationConnect(Resource):
 
         return {
             "message": "공문서와 위치가 연결되었습니다.",
-            "relation_id": relation.relation_id
+            "relation_id": relation.relation_id,
         }, 201
 
     def delete(self, doc_id, location_id):
         """공문서-위치 연결 해제 (관리자용)"""
         relation = DocumentLocation.query.filter_by(
-            doc_id=doc_id,
-            location_id=location_id
+            doc_id=doc_id, location_id=location_id
         ).first_or_404()
 
         db.session.delete(relation)
@@ -170,7 +168,7 @@ class AdminDocumentLocationList(Resource):
 
     def get(self, doc_id):
         """문서에 연결된 위치 목록 조회 (관리자용)"""
-        document = Document.query.get_or_404(doc_id)
+        Document.query.get_or_404(doc_id)
 
         relations = DocumentLocation.query.filter_by(doc_id=doc_id).all()
         location_ids = [r.location_id for r in relations]
@@ -178,5 +176,5 @@ class AdminDocumentLocationList(Resource):
         return {
             "doc_id": doc_id,
             "location_ids": location_ids,
-            "count": len(location_ids)
+            "count": len(location_ids),
         }, 200

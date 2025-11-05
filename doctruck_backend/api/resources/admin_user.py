@@ -97,5 +97,5 @@ class AdminUserResource(Resource):
 
         return {
             "user": user_schema.dump(user),
-            "food_trucks": truck_schema.dump(food_trucks)
+            "food_trucks": truck_schema.dump(food_trucks),
         }, 200

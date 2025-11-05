@@ -10,7 +10,9 @@ def init():
     from doctruck_backend.models import User
 
     click.echo("create user")
-    user = User(username="admin", email="pupajusang01@gmail.com", password="admin", active=True)
+    user = User(
+        username="admin", email="pupajusang01@gmail.com", password="admin", active=True
+    )
     db.session.add(user)
     db.session.commit()
     click.echo("created user admin")

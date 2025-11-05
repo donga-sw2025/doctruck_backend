@@ -24,7 +24,6 @@ from sqlalchemy import or_
 from doctruck_backend.api.schemas import DocumentSchema
 from doctruck_backend.models import Document
 from doctruck_backend.models.document import DocumentStatus, DocumentType
-from doctruck_backend.extensions import db
 from doctruck_backend.commons.pagination import paginate
 from datetime import datetime
 
@@ -193,7 +192,7 @@ class DocumentList(Resource):
         if search:
             search_filter = or_(
                 Document.title.ilike(f"%{search}%"),
-                Document.ai_summary.ilike(f"%{search}%")
+                Document.ai_summary.ilike(f"%{search}%"),
             )
             query = query.filter(search_filter)
 

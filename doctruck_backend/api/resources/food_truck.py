@@ -73,7 +73,10 @@ class FoodTruckResource(Resource):
         food_truck = schema.load(request.json, instance=food_truck)
         db.session.commit()
 
-        return {"message": "푸드트럭이 수정되었습니다.", "food_truck": schema.dump(food_truck)}, 200
+        return {
+            "message": "푸드트럭이 수정되었습니다.",
+            "food_truck": schema.dump(food_truck),
+        }, 200
 
     def delete(self, truck_id):
         """푸드트럭 삭제"""
@@ -143,5 +146,5 @@ class FoodTruckList(Resource):
 
         return {
             "message": "푸드트럭이 등록되었습니다.",
-            "food_truck": schema.dump(food_truck)
+            "food_truck": schema.dump(food_truck),
         }, 201

@@ -105,7 +105,7 @@ class LocationInterest(Resource):
             return {"message": "truck_id가 필요합니다."}, 400
 
         # 위치 존재 확인
-        location = Location.query.get_or_404(location_id)
+        Location.query.get_or_404(location_id)
 
         # 트럭 존재 및 소유권 확인
         truck = FoodTruck.query.get_or_404(truck_id)
@@ -114,8 +114,7 @@ class LocationInterest(Resource):
 
         # 이미 등록되어 있는지 확인
         existing = FoodTruckLocation.query.filter_by(
-            truck_id=truck_id,
-            location_id=location_id
+            truck_id=truck_id, location_id=location_id
         ).first()
 
         if existing:
@@ -125,14 +124,14 @@ class LocationInterest(Resource):
         interest = FoodTruckLocation(
             truck_id=truck_id,
             location_id=location_id,
-            status=ApplicationStatus.INTERESTED
+            status=ApplicationStatus.INTERESTED,
         )
         db.session.add(interest)
         db.session.commit()
 
         return {
             "message": "위치 관심 등록이 완료되었습니다.",
-            "application_id": interest.application_id
+            "application_id": interest.application_id,
         }, 201
 
     def delete(self, location_id):
@@ -150,8 +149,7 @@ class LocationInterest(Resource):
 
         # 관심 등록 찾기
         interest = FoodTruckLocation.query.filter_by(
-            truck_id=truck_id,
-            location_id=location_id
+            truck_id=truck_id, location_id=location_id
         ).first_or_404()
 
         db.session.delete(interest)
@@ -221,18 +219,24 @@ class MyLocationInterests(Resource):
                 return {"message": "본인 소유의 푸드트럭이 아닙니다."}, 403
             query = FoodTruckLocation.query.filter_by(truck_id=truck_id_filter)
         else:
-            query = FoodTruckLocation.query.filter(FoodTruckLocation.truck_id.in_(my_truck_ids))
+            query = FoodTruckLocation.query.filter(
+                FoodTruckLocation.truck_id.in_(my_truck_ids)
+            )
 
         interests = query.all()
 
         result = []
         for interest in interests:
-            result.append({
-                "application_id": interest.application_id,
-                "truck_id": interest.truck_id,
-                "location_id": interest.location_id,
-                "status": interest.status.value,
-                "created_at": interest.created_at.isoformat() if interest.created_at else None
-            })
+            result.append(
+                {
+                    "application_id": interest.application_id,
+                    "truck_id": interest.truck_id,
+                    "location_id": interest.location_id,
+                    "status": interest.status.value,
+                    "created_at": (
+                        interest.created_at.isoformat() if interest.created_at else None
+                    ),
+                }
+            )
 
         return {"interests": result, "count": len(result)}, 200

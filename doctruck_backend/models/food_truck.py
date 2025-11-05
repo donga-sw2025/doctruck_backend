@@ -13,16 +13,20 @@ class FoodTruck(db.Model):
 
     # Foreign Key - 소유자 (User)
     owner_id = db.Column(
-        db.Integer,
-        db.ForeignKey("user.id", ondelete="CASCADE"),
-        nullable=False
+        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
 
     # 푸드트럭 기본 정보
     truck_name = db.Column(db.String(100), nullable=False)  # 푸드트럭 이름
-    business_registration_number = db.Column(db.String(50), nullable=True)  # 사업자 등록 번호
-    food_category = db.Column(db.String(50), nullable=True)  # 음식 카테고리 (예: '디저트', '한식')
-    operating_region = db.Column(db.String(100), nullable=True)  # 주 활동 지역 (예: '서울', '경기')
+    business_registration_number = db.Column(
+        db.String(50), nullable=True
+    )  # 사업자 등록 번호
+    food_category = db.Column(
+        db.String(50), nullable=True
+    )  # 음식 카테고리 (예: '디저트', '한식')
+    operating_region = db.Column(
+        db.String(100), nullable=True
+    )  # 주 활동 지역 (예: '서울', '경기')
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     # Relationships
@@ -34,7 +38,7 @@ class FoodTruck(db.Model):
         "FoodTruckLocation",
         back_populates="food_truck",
         lazy="dynamic",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):

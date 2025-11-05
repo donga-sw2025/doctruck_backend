@@ -6,6 +6,7 @@ from doctruck_backend.extensions import db
 
 class ApplicationStatus(enum.Enum):
     """신청/관심 상태 - Spring의 enum과 동일"""
+
     INTERESTED = "INTERESTED"  # 관심 있음
     APPLIED = "APPLIED"  # 신청 완료
     APPROVED = "APPROVED"  # 승인됨
@@ -29,28 +30,25 @@ class FoodTruckLocation(db.Model):
     truck_id = db.Column(
         db.BigInteger,
         db.ForeignKey("food_trucks.truck_id", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
     location_id = db.Column(
         db.BigInteger,
         db.ForeignKey("locations.location_id", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
 
     # 상태 정보 - 단순 관계가 아니라 비즈니스 로직이 포함된 관계
     status = db.Column(
-        db.Enum(ApplicationStatus),
-        nullable=False,
-        default=ApplicationStatus.INTERESTED
+        db.Enum(ApplicationStatus), nullable=False, default=ApplicationStatus.INTERESTED
     )
 
     # 날짜 정보
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)  # 관심/신청 일시
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False
+    )  # 관심/신청 일시
     updated_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
-        nullable=False
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
     )  # 상태 변경 일시
 
     # Relationships

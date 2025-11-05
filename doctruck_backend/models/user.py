@@ -21,7 +21,9 @@ class User(db.Model):
     # 새로운 컬럼 추가 (FUNCTIONAL_SPECS 기준)
     name = db.Column(db.String(100), nullable=True)  # 사업자명 또는 이름
     phone_number = db.Column(db.String(20), nullable=True)  # 연락처
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=True)  # 계정 생성일
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=True
+    )  # 계정 생성일
 
     # Relationships - 푸드트럭과의 관계 (1:N)
     food_trucks = db.relationship("FoodTruck", back_populates="owner", lazy="dynamic")

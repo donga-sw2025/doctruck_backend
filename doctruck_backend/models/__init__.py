@@ -5,7 +5,10 @@ from doctruck_backend.models.food_truck import FoodTruck
 from doctruck_backend.models.location import Location, LocationType
 from doctruck_backend.models.document import Document, DocumentType, DocumentStatus
 from doctruck_backend.models.document_location import DocumentLocation
-from doctruck_backend.models.food_truck_location import FoodTruckLocation, ApplicationStatus
+from doctruck_backend.models.food_truck_location import (
+    FoodTruckLocation,
+    ApplicationStatus,
+)
 
 
 __all__ = [

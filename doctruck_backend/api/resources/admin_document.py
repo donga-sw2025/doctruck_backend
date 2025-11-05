@@ -62,7 +62,9 @@ class AdminDocumentPending(Resource):
     def get(self):
         """PENDING 문서 목록 조회 (관리자용)"""
         schema = DocumentSchema(many=True)
-        query = Document.query.filter_by(status=DocumentStatus.PENDING).order_by(Document.created_at.desc())
+        query = Document.query.filter_by(status=DocumentStatus.PENDING).order_by(
+            Document.created_at.desc()
+        )
         return paginate(query, schema)
 
 
@@ -146,7 +148,9 @@ class AdminDocumentVerify(Resource):
             document.verified_by_admin_id = admin_id
             document.verified_at = datetime.utcnow()
             # rejection_reason 필드가 없으므로 ai_summary에 추가 기록 (임시)
-            document.ai_summary = f"[REJECTED: {rejection_reason}]\n\n{document.ai_summary or ''}"
+            document.ai_summary = (
+                f"[REJECTED: {rejection_reason}]\n\n{document.ai_summary or ''}"
+            )
             message = "문서가 반려되었습니다."
 
         db.session.commit()
@@ -274,7 +278,10 @@ class AdminDocumentResource(Resource):
         document = Document.query.get_or_404(doc_id)
         document = schema.load(request.json, instance=document)
         db.session.commit()
-        return {"message": "문서가 수정되었습니다.", "document": schema.dump(document)}, 200
+        return {
+            "message": "문서가 수정되었습니다.",
+            "document": schema.dump(document),
+        }, 200
 
     def delete(self, doc_id):
         """문서 삭제 (관리자용)"""

@@ -24,7 +24,7 @@ class Admin(db.Model):
         "Document",
         foreign_keys="Document.verified_by_admin_id",
         back_populates="verified_by_admin",
-        lazy="dynamic"
+        lazy="dynamic",
     )
 
     @hybrid_property

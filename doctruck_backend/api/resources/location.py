@@ -20,12 +20,10 @@ public class LocationController {
 
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from sqlalchemy import and_, or_
+from sqlalchemy import or_
 
 from doctruck_backend.api.schemas import LocationSchema
 from doctruck_backend.models import Location
-from doctruck_backend.extensions import db
 from doctruck_backend.commons.pagination import paginate
 from datetime import datetime
 
@@ -150,6 +148,7 @@ class LocationList(Resource):
         if location_type:
             # Enum 값으로 필터링
             from doctruck_backend.models.location import LocationType
+
             try:
                 location_type_enum = LocationType[location_type.upper()]
                 query = query.filter(Location.location_type == location_type_enum)
@@ -167,7 +166,9 @@ class LocationList(Resource):
                 query = query.filter(
                     or_(
                         Location.operating_end_date >= start_date_obj,
-                        Location.operating_end_date.is_(None)  # 종료일 없음 = 상시 운영
+                        Location.operating_end_date.is_(
+                            None
+                        ),  # 종료일 없음 = 상시 운영
                     )
                 )
             except ValueError:
@@ -180,7 +181,7 @@ class LocationList(Resource):
                 query = query.filter(
                     or_(
                         Location.operating_start_date <= end_date_obj,
-                        Location.operating_start_date.is_(None)
+                        Location.operating_start_date.is_(None),
                     )
                 )
             except ValueError:
@@ -192,7 +193,7 @@ class LocationList(Resource):
             # Spring의 JPA Specification과 유사
             search_filter = or_(
                 Location.location_name.ilike(f"%{search}%"),
-                Location.address.ilike(f"%{search}%")
+                Location.address.ilike(f"%{search}%"),
             )
             query = query.filter(search_filter)
 

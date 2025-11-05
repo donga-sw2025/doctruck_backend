@@ -19,12 +19,12 @@ class DocumentLocation(db.Model):
     doc_id = db.Column(
         db.BigInteger,
         db.ForeignKey("documents.doc_id", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
     location_id = db.Column(
         db.BigInteger,
         db.ForeignKey("locations.location_id", ondelete="CASCADE"),
-        nullable=False
+        nullable=False,
     )
 
     # 관계 생성 일시

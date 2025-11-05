@@ -140,7 +140,7 @@ class AdminLocationList(Resource):
 
         return {
             "message": "위치가 등록되었습니다.",
-            "location": schema.dump(location)
+            "location": schema.dump(location),
         }, 201
 
 
@@ -259,7 +259,10 @@ class AdminLocationResource(Resource):
         location = Location.query.get_or_404(location_id)
         location = schema.load(request.json, instance=location)
         db.session.commit()
-        return {"message": "위치가 수정되었습니다.", "location": schema.dump(location)}, 200
+        return {
+            "message": "위치가 수정되었습니다.",
+            "location": schema.dump(location),
+        }, 200
 
     def delete(self, location_id):
         """위치 삭제 (관리자용)"""

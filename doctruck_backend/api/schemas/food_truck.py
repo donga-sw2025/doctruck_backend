@@ -28,7 +28,7 @@ class FoodTruckSchema(ma.SQLAlchemyAutoSchema):
             "business_registration_number",
             "food_category",
             "operating_region",
-            "created_at"
+            "created_at",
         )
 
         # 읽기 전용 필드 (Spring의 @JsonProperty(access = READ_ONLY))

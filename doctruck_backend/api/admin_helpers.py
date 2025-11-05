@@ -21,12 +21,18 @@ def admin_required(fn):
     Spring의 @PreAuthorize("hasRole('ADMIN')")과 유사
     JWT identity가 "admin:" prefix로 시작하는지 확인
     """
+
     @wraps(fn)
     def wrapper(*args, **kwargs):
         identity = get_jwt_identity()
-        if not identity or not isinstance(identity, str) or not identity.startswith("admin:"):
+        if (
+            not identity
+            or not isinstance(identity, str)
+            or not identity.startswith("admin:")
+        ):
             return jsonify({"message": "관리자 권한이 필요합니다."}), 403
         return fn(*args, **kwargs)
+
     return wrapper
 
 

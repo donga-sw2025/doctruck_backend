@@ -18,14 +18,17 @@ public class RecommendationController {
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from sqlalchemy import or_, and_
+from sqlalchemy import or_
 
 from doctruck_backend.api.schemas import LocationSchema, DocumentSchema
 from doctruck_backend.models import (
-    FoodTruck, Location, Document, DocumentLocation, FoodTruckLocation
+    FoodTruck,
+    Location,
+    Document,
+    DocumentLocation,
+    FoodTruckLocation,
 )
 from doctruck_backend.models.document import DocumentStatus
-from doctruck_backend.extensions import db
 from datetime import datetime, timedelta
 
 
@@ -94,8 +97,7 @@ class RecommendedLocations(Resource):
         # 내 푸드트럭 가져오기
         if truck_id_filter:
             trucks = FoodTruck.query.filter_by(
-                truck_id=truck_id_filter,
-                owner_id=current_user_id
+                truck_id=truck_id_filter, owner_id=current_user_id
             ).all()
             if not trucks:
                 return {"message": "본인 소유의 푸드트럭이 아닙니다."}, 403
@@ -105,7 +107,7 @@ class RecommendedLocations(Resource):
         if not trucks:
             return {
                 "message": "등록된 푸드트럭이 없습니다. 푸드트럭을 먼저 등록하세요.",
-                "recommendations": []
+                "recommendations": [],
             }, 200
 
         # 이미 관심 등록한 위치 제외
@@ -122,7 +124,7 @@ class RecommendedLocations(Resource):
         available_locations = Location.query.filter(
             or_(
                 Location.application_deadline.is_(None),
-                Location.application_deadline >= today
+                Location.application_deadline >= today,
             )
         ).all()
 
@@ -152,7 +154,10 @@ class RecommendedLocations(Resource):
                         "분식": "MARKET",
                     }
                     preferred_type = category_location_map.get(truck.food_category)
-                    if preferred_type and location.location_type.value == preferred_type:
+                    if (
+                        preferred_type
+                        and location.location_type.value == preferred_type
+                    ):
                         score += 20
                         reasons.append(f"{truck.food_category} 카테고리에 적합한 위치")
 
@@ -175,11 +180,9 @@ class RecommendedLocations(Resource):
             if not reasons:
                 reasons.append("새로운 사업 기회")
 
-            scored_locations.append({
-                "location": location,
-                "score": score,
-                "reason": ", ".join(reasons)
-            })
+            scored_locations.append(
+                {"location": location, "score": score, "reason": ", ".join(reasons)}
+            )
 
         # 점수 순 정렬
         scored_locations.sort(key=lambda x: x["score"], reverse=True)
@@ -191,16 +194,15 @@ class RecommendedLocations(Resource):
         location_schema = LocationSchema()
         result = []
         for item in top_recommendations:
-            result.append({
-                "location": location_schema.dump(item["location"]),
-                "score": item["score"],
-                "reason": item["reason"]
-            })
+            result.append(
+                {
+                    "location": location_schema.dump(item["location"]),
+                    "score": item["score"],
+                    "reason": item["reason"],
+                }
+            )
 
-        return {
-            "recommendations": result,
-            "count": len(result)
-        }, 200
+        return {"recommendations": result, "count": len(result)}, 200
 
 
 class RecommendedDocuments(Resource):
@@ -259,7 +261,7 @@ class RecommendedDocuments(Resource):
         if not my_trucks:
             return {
                 "message": "등록된 푸드트럭이 없습니다.",
-                "recommendations": []
+                "recommendations": [],
             }, 200
 
         # 내 관심 위치 가져오기
@@ -281,7 +283,7 @@ class RecommendedDocuments(Resource):
         since_date = datetime.now() - timedelta(days=days)
         recent_docs = Document.query.filter(
             Document.status == DocumentStatus.VERIFIED,
-            Document.verified_at >= since_date
+            Document.verified_at >= since_date,
         ).all()
 
         recommended_docs = []
@@ -306,21 +308,17 @@ class RecommendedDocuments(Resource):
 
             # 추천 이유가 있는 것만
             if reasons:
-                recommended_docs.append({
-                    "document": doc,
-                    "reason": ", ".join(reasons)
-                })
+                recommended_docs.append({"document": doc, "reason": ", ".join(reasons)})
 
         # Schema로 직렬화
         doc_schema = DocumentSchema()
         result = []
         for item in recommended_docs:
-            result.append({
-                "document": doc_schema.dump(item["document"]),
-                "reason": item["reason"]
-            })
+            result.append(
+                {
+                    "document": doc_schema.dump(item["document"]),
+                    "reason": item["reason"],
+                }
+            )
 
-        return {
-            "recommendations": result,
-            "count": len(result)
-        }, 200
+        return {"recommendations": result, "count": len(result)}, 200

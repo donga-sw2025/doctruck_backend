@@ -9,7 +9,11 @@ from flask_jwt_extended import (
 
 from doctruck_backend.models import User, Admin
 from doctruck_backend.extensions import pwd_context, jwt, apispec
-from doctruck_backend.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
+from doctruck_backend.auth.helpers import (
+    revoke_token,
+    is_token_revoked,
+    add_token_to_database,
+)
 
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -248,7 +252,7 @@ def admin_login():
         "access_token": access_token,
         "refresh_token": refresh_token,
         "admin_id": admin.admin_id,
-        "name": admin.name
+        "name": admin.name,
     }
     return jsonify(ret), 200
 
