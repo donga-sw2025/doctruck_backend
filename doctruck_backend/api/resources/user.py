@@ -8,14 +8,14 @@ from doctruck_backend.commons.pagination import paginate
 
 
 class UserResource(Resource):
-    """Single object resource
+    """사용자 리소스
 
     ---
     get:
       tags:
         - api
-      summary: Get a user
-      description: Get a single user by ID
+      summary: 사용자 조회
+      description: ID로 사용자 정보를 조회합니다
       parameters:
         - in: path
           name: user_id
@@ -30,12 +30,12 @@ class UserResource(Resource):
                 properties:
                   user: UserSchema
         404:
-          description: user does not exists
+          description: 사용자를 찾을 수 없음
     put:
       tags:
         - api
-      summary: Update a user
-      description: Update a single user by ID
+      summary: 사용자 수정
+      description: ID로 사용자 정보를 수정합니다
       parameters:
         - in: path
           name: user_id
@@ -58,12 +58,12 @@ class UserResource(Resource):
                     example: user updated
                   user: UserSchema
         404:
-          description: user does not exists
+          description: 사용자를 찾을 수 없음
     delete:
       tags:
         - api
-      summary: Delete a user
-      description: Delete a single user by ID
+      summary: 사용자 삭제
+      description: ID로 사용자를 삭제합니다
       parameters:
         - in: path
           name: user_id
@@ -80,7 +80,7 @@ class UserResource(Resource):
                     type: string
                     example: user deleted
         404:
-          description: user does not exists
+          description: 사용자를 찾을 수 없음
     """
 
     method_decorators = [jwt_required()]
@@ -108,14 +108,14 @@ class UserResource(Resource):
 
 
 class UserList(Resource):
-    """Creation and get_all
+    """사용자 목록 리소스
 
     ---
     get:
       tags:
         - api
-      summary: Get a list of users
-      description: Get a list of paginated users
+      summary: 사용자 목록 조회
+      description: 페이지네이션된 사용자 목록을 조회합니다
       responses:
         200:
           content:
@@ -132,8 +132,8 @@ class UserList(Resource):
     post:
       tags:
         - api
-      summary: Create a user
-      description: Create a new user
+      summary: 사용자 생성
+      description: 새로운 사용자를 생성합니다
       requestBody:
         content:
           application/json:
