@@ -116,3 +116,4 @@ docker-compose.override.yml
 # Deployment
 doctruck_backend.tar.gz
 nginx/ssl/
+ERROR_LOG.txt
