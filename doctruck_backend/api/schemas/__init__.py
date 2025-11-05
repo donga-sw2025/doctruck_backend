@@ -1,0 +1,4 @@
+from doctruck_backend.api.schemas.user import UserSchema
+
+
+__all__ = ["UserSchema"]
