@@ -37,12 +37,10 @@ def login():
               properties:
                 username:
                   type: string
-                  example: myuser
-                  required: true
+                  example: testuser
                 password:
                   type: string
-                  example: P4$$w0rd!
-                  required: true
+                  example: testpass123
       responses:
         200:
           content:

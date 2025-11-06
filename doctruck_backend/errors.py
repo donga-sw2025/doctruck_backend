@@ -4,6 +4,7 @@ Flask의 errorhandler와 JWT 콜백을 한 곳에서 관리합니다.
 Spring의 @ControllerAdvice와 유사한 패턴입니다.
 """
 
+import logging
 from flask import jsonify
 from werkzeug.exceptions import HTTPException
 from flask_jwt_extended.exceptions import (
@@ -13,6 +14,8 @@ from flask_jwt_extended.exceptions import (
     CSRFError,
     RevokedTokenError,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def register_error_handlers(app, jwt):
@@ -176,6 +179,13 @@ def register_error_handlers(app, jwt):
     @app.errorhandler(Exception)
     def handle_generic_exception(e):
         """모든 예외에 대한 최종 폴백 핸들러"""
+        # 로그에 항상 상세한 에러 정보 기록 (프로덕션 디버깅용)
+        logger.error(
+            f"Unhandled exception: {type(e).__name__}: {str(e)}",
+            exc_info=True,
+            extra={"error_type": type(e).__name__},
+        )
+
         # 개발 환경에서는 상세한 에러 메시지를, 프로덕션에서는 일반적인 메시지를
         if app.debug:
             return (
