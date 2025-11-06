@@ -17,12 +17,21 @@ public class DocumentDto {
 }
 """
 
+from marshmallow import fields as ma_fields
+
 from doctruck_backend.models import Document
 from doctruck_backend.extensions import ma, db
 
 
 class DocumentSchema(ma.SQLAlchemyAutoSchema):
     """Document 모델 직렬화/역직렬화 스키마"""
+
+    # Enum을 문자열로 직렬화 (DocumentType.POLICY -> "POLICY")
+    # Meta 클래스보다 먼저 선언해야 제대로 오버라이드됨
+    document_type = ma_fields.Method(
+        "get_document_type", deserialize="load_document_type"
+    )
+    status = ma_fields.Method("get_status", deserialize="load_status")
 
     class Meta:
         model = Document
@@ -55,6 +64,32 @@ class DocumentSchema(ma.SQLAlchemyAutoSchema):
             "created_at",
         )
 
-    # Enum을 문자열로 직렬화
-    document_type = ma.Field()
-    status = ma.Field()
+    def get_document_type(self, obj):
+        """DocumentType Enum을 문자열로 변환"""
+        return obj.document_type.value if obj.document_type else None
+
+    def load_document_type(self, value):
+        """문자열을 DocumentType Enum으로 변환"""
+        from doctruck_backend.models.document import DocumentType
+
+        if value:
+            try:
+                return DocumentType[value.upper()]
+            except KeyError:
+                return None
+        return None
+
+    def get_status(self, obj):
+        """DocumentStatus Enum을 문자열로 변환"""
+        return obj.status.value if obj.status else None
+
+    def load_status(self, value):
+        """문자열을 DocumentStatus Enum으로 변환"""
+        from doctruck_backend.models.document import DocumentStatus
+
+        if value:
+            try:
+                return DocumentStatus[value.upper()]
+            except KeyError:
+                return None
+        return None
