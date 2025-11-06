@@ -6,7 +6,7 @@ Spring의 @ControllerAdvice와 유사한 패턴입니다.
 
 import logging
 from flask import jsonify
-from werkzeug.exceptions import HTTPException, BadRequest
+from werkzeug.exceptions import HTTPException
 from flask_jwt_extended.exceptions import (
     NoAuthorizationError,
     InvalidHeaderError,
