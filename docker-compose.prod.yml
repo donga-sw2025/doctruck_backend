@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     image: doctruck_backend:latest
@@ -12,6 +10,7 @@ services:
     volumes:
       - ./db:/db
       - ./logs:/logs
+      - ./migrations:/code/migrations
     ports:
       - "5000:5000"
     depends_on:

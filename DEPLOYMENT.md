@@ -280,18 +280,69 @@ docker image prune -a
 
 ### 데이터베이스 초기화
 
+**⚠️ 주의: 이 작업은 모든 데이터를 삭제합니다!**
+
+**전제 조건**: 최신 코드가 GitHub Actions를 통해 배포되어 있어야 합니다.
+
+#### 단계별 실행:
+
 ```bash
 cd ~/doctruck_backend
 
-# 주의: 모든 데이터가 삭제됩니다!
-docker-compose -f docker-compose.prod.yml down
+# 1. 서비스 중지 및 데이터베이스 삭제
+docker compose -f docker-compose.prod.yml down
 rm -rf db/doctruck_backend.db
-docker-compose -f docker-compose.prod.yml up -d
 
-# 데이터베이스 재생성
-docker-compose -f docker-compose.prod.yml exec web flask db upgrade
-docker-compose -f docker-compose.prod.yml exec web flask init
+# 2. 서비스 재시작 (최신 이미지 사용)
+docker compose -f docker-compose.prod.yml up -d
+
+# 3. 서비스 시작 대기
+sleep 5
+
+# 4. 데이터베이스 마이그레이션 적용
+docker compose -f docker-compose.prod.yml exec web flask db upgrade
+
+# 5-A. 더미 데이터 생성 (개발/테스트용)
+docker compose -f docker-compose.prod.yml exec web flask seed --clear
+
+# 5-B. 또는 관리자만 생성 (프로덕션용)
+# docker compose -f docker-compose.prod.yml exec web flask init
 ```
+
+#### 빠른 초기화 (한 줄로 실행):
+
+**개발/테스트 환경 (더미 데이터 포함)**:
+```bash
+cd ~/doctruck_backend && \
+docker compose -f docker-compose.prod.yml down && \
+rm -rf db/doctruck_backend.db && \
+docker compose -f docker-compose.prod.yml up -d && \
+sleep 5 && \
+docker compose -f docker-compose.prod.yml exec web flask db upgrade && \
+docker compose -f docker-compose.prod.yml exec web flask seed --clear
+```
+
+**프로덕션 환경 (관리자만 생성)**:
+```bash
+cd ~/doctruck_backend && \
+docker compose -f docker-compose.prod.yml down && \
+rm -rf db/doctruck_backend.db && \
+docker compose -f docker-compose.prod.yml up -d && \
+sleep 5 && \
+docker compose -f docker-compose.prod.yml exec web flask db upgrade && \
+docker compose -f docker-compose.prod.yml exec web flask init
+```
+
+#### 최신 코드가 배포되지 않은 경우:
+
+1. 로컬에서 코드를 커밋하고 푸시:
+   ```bash
+   git push origin main
+   ```
+
+2. GitHub Actions에서 배포 완료 대기
+
+3. 서버에서 위의 데이터베이스 초기화 명령어 실행
 
 ## 6. 보안 고려사항
 
