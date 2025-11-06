@@ -89,9 +89,7 @@ def register_error_handlers(app, jwt):
     def handle_csrf_error(e):
         """CSRF 토큰 오류"""
         return (
-            jsonify(
-                {"error": "csrf_error", "msg": "CSRF token validation failed"}
-            ),
+            jsonify({"error": "csrf_error", "msg": "CSRF token validation failed"}),
             401,
         )
 
@@ -124,7 +122,11 @@ def register_error_handlers(app, jwt):
         """유효하지 않은 토큰"""
         return (
             jsonify(
-                {"error": "invalid_token", "msg": "Invalid token", "details": error_string}
+                {
+                    "error": "invalid_token",
+                    "msg": "Invalid token",
+                    "details": error_string,
+                }
             ),
             401,
         )
