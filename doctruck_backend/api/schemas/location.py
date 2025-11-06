@@ -16,6 +16,7 @@ public class LocationDto {
 }
 """
 
+from marshmallow import fields as ma_fields
 from doctruck_backend.models import Location
 from doctruck_backend.extensions import ma, db
 
@@ -29,7 +30,7 @@ class LocationSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True  # Foreign Key 포함
         sqla_session = db.session
 
-        # 응답에 포함할 필드
+        # 응답에 포함할 필드 (실제 모델의 필드와 일치)
         fields = (
             "location_id",
             "location_name",
@@ -37,24 +38,21 @@ class LocationSchema(ma.SQLAlchemyAutoSchema):
             "address",
             "latitude",
             "longitude",
-            "operating_start_date",
-            "operating_end_date",
-            "max_capacity",
-            "current_applicants",
-            "application_deadline",
-            "description",
-            "contact_info",
+            "start_datetime",
+            "end_datetime",
+            "description_summary",
             "created_at",
-            "updated_at",
         )
 
         # 읽기 전용 필드 (생성/수정 시 무시됨)
         dump_only = (
             "location_id",
             "created_at",
-            "updated_at",
-            "current_applicants",  # 시스템이 자동 계산
         )
 
-    # Enum을 문자열로 직렬화
-    location_type = ma.Field()
+    # Enum을 문자열로 직렬화 (LocationType.FESTIVAL -> "FESTIVAL")
+    location_type = ma_fields.Method("get_location_type")
+
+    def get_location_type(self, obj):
+        """LocationType Enum을 문자열로 변환"""
+        return obj.location_type.value if obj.location_type else None
