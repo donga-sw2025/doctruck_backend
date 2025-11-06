@@ -119,12 +119,12 @@ class RecommendedLocations(Resource):
             ).all()
         ]
 
-        # 추천 가능한 위치 (신청 마감 안 된 위치)
-        today = datetime.now().date()
+        # 추천 가능한 위치 (운영 종료일이 지나지 않은 위치)
+        today = datetime.now()
         available_locations = Location.query.filter(
             or_(
-                Location.application_deadline.is_(None),
-                Location.application_deadline >= today,
+                Location.end_datetime.is_(None),  # 종료일 없음 = 상시 운영
+                Location.end_datetime >= today,  # 아직 종료 안 됨
             )
         ).all()
 
@@ -162,18 +162,23 @@ class RecommendedLocations(Resource):
                         reasons.append(f"{truck.food_category} 카테고리에 적합한 위치")
 
             # 3. 운영 기간 임박 (10점)
-            if location.operating_start_date:
-                days_until_start = (location.operating_start_date - today).days
+            if location.start_datetime:
+                days_until_start = (location.start_datetime.date() - today.date()).days
                 if 0 <= days_until_start <= 30:
                     score += 10
                     reasons.append(f"{days_until_start}일 후 시작")
 
-            # 4. 여유 공간 있음 (10점)
-            if location.max_capacity and location.current_applicants:
-                if location.current_applicants < location.max_capacity:
-                    remaining = location.max_capacity - location.current_applicants
-                    score += 10
-                    reasons.append(f"잔여 {remaining}자리")
+            # 4. 신청자 수 확인 (관계 테이블 조회)
+            # FoodTruckLocation에서 이 위치에 대한 신청 수 확인
+            applicant_count = FoodTruckLocation.query.filter_by(
+                location_id=location.location_id
+            ).count()
+            if applicant_count < 10:  # 임의의 제한 (10명)
+                score += 10
+                reasons.append(f"신청자 {applicant_count}명")
+            elif applicant_count < 20:
+                score += 5
+                reasons.append(f"신청자 {applicant_count}명 (경쟁 중간)")
 
             # 5. 기본 점수 (모든 위치에 5점 - 최소 추천)
             score += 5

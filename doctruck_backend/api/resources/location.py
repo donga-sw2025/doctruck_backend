@@ -161,14 +161,12 @@ class LocationList(Resource):
 
         if start_date:
             try:
-                start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+                start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
                 # 운영 종료일이 시작일 이후인 위치 (아직 종료 안 된 것)
                 query = query.filter(
                     or_(
-                        Location.operating_end_date >= start_date_obj,
-                        Location.operating_end_date.is_(
-                            None
-                        ),  # 종료일 없음 = 상시 운영
+                        Location.end_datetime >= start_date_obj,
+                        Location.end_datetime.is_(None),  # 종료일 없음 = 상시 운영
                     )
                 )
             except ValueError:
@@ -176,12 +174,12 @@ class LocationList(Resource):
 
         if end_date:
             try:
-                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
                 # 운영 시작일이 종료일 이전인 위치 (아직 시작 전인 것도 포함)
                 query = query.filter(
                     or_(
-                        Location.operating_start_date <= end_date_obj,
-                        Location.operating_start_date.is_(None),
+                        Location.start_datetime <= end_date_obj,
+                        Location.start_datetime.is_(None),
                     )
                 )
             except ValueError:
