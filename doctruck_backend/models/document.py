@@ -28,7 +28,7 @@ class Document(db.Model):
     __tablename__ = "documents"
 
     # Primary Key
-    doc_id = db.Column(db.BigInteger, primary_key=True)
+    doc_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # 문서 기본 정보
     title = db.Column(db.String(255), nullable=False)  # 문서 제목
@@ -48,7 +48,7 @@ class Document(db.Model):
 
     # Foreign Key - 검증한 관리자
     verified_by_admin_id = db.Column(
-        db.BigInteger,
+        db.Integer,
         db.ForeignKey("admins.admin_id", ondelete="SET NULL"),
         nullable=True,
     )

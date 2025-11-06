@@ -13,16 +13,16 @@ class DocumentLocation(db.Model):
     __tablename__ = "document_locations"
 
     # Primary Key
-    relation_id = db.Column(db.BigInteger, primary_key=True)
+    relation_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Foreign Keys
     doc_id = db.Column(
-        db.BigInteger,
+        db.Integer,
         db.ForeignKey("documents.doc_id", ondelete="CASCADE"),
         nullable=False,
     )
     location_id = db.Column(
-        db.BigInteger,
+        db.Integer,
         db.ForeignKey("locations.location_id", ondelete="CASCADE"),
         nullable=False,
     )

@@ -20,7 +20,7 @@ class Location(db.Model):
     __tablename__ = "locations"
 
     # Primary Key
-    location_id = db.Column(db.BigInteger, primary_key=True)
+    location_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # 위치 기본 정보
     location_name = db.Column(

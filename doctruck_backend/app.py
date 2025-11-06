@@ -65,7 +65,10 @@ def configure_extensions(app):
 
 def configure_cli(app):
     """Configure Flask 2.0's cli for easy entity management"""
+    from doctruck_backend.seed_data import seed_dummy_data
+
     app.cli.add_command(manage.init)
+    app.cli.add_command(seed_dummy_data)
 
 
 def configure_apispec(app):

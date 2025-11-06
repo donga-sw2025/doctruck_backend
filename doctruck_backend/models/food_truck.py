@@ -9,7 +9,7 @@ class FoodTruck(db.Model):
     __tablename__ = "food_trucks"
 
     # Primary Key
-    truck_id = db.Column(db.BigInteger, primary_key=True)
+    truck_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Foreign Key - 소유자 (User)
     owner_id = db.Column(

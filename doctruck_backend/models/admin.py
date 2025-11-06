@@ -10,7 +10,7 @@ class Admin(db.Model):
     __tablename__ = "admins"
 
     # Primary Key
-    admin_id = db.Column(db.BigInteger, primary_key=True)
+    admin_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # 관리자 계정 정보
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -35,6 +35,10 @@ class Admin(db.Model):
     def password(self, value):
         """비밀번호 자동 해싱 (User 모델과 동일한 방식)"""
         self._password = pwd_context.hash(value)
+
+    def check_password(self, value):
+        """비밀번호 검증"""
+        return pwd_context.verify(value, self._password)
 
     def __repr__(self):
         return f"<Admin {self.name} ({self.email})>"

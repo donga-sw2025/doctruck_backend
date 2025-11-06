@@ -24,16 +24,16 @@ class FoodTruckLocation(db.Model):
     __tablename__ = "food_truck_locations"
 
     # Primary Key
-    application_id = db.Column(db.BigInteger, primary_key=True)
+    application_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Foreign Keys
     truck_id = db.Column(
-        db.BigInteger,
+        db.Integer,
         db.ForeignKey("food_trucks.truck_id", ondelete="CASCADE"),
         nullable=False,
     )
     location_id = db.Column(
-        db.BigInteger,
+        db.Integer,
         db.ForeignKey("locations.location_id", ondelete="CASCADE"),
         nullable=False,
     )
