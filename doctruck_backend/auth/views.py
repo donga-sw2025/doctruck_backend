@@ -30,10 +30,14 @@ def login():
       summary: 사용자 로그인
       description: 사용자 인증 정보로 로그인하여 액세스 토큰과 리프레시 토큰을 발급받습니다
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - username
+                - password
               properties:
                 username:
                   type: string
@@ -41,6 +45,9 @@ def login():
                 password:
                   type: string
                   example: testpass123
+            example:
+              username: testuser
+              password: testpass123
       responses:
         200:
           content:
@@ -187,19 +194,24 @@ def admin_login():
       summary: 관리자 로그인
       description: 관리자 인증 정보로 로그인하여 관리자 권한 토큰을 발급받습니다
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - email
+                - password
               properties:
                 email:
                   type: string
                   example: admin@example.com
-                  required: true
                 password:
                   type: string
                   example: adminpassword
-                  required: true
+            example:
+              email: admin@example.com
+              password: adminpassword
       responses:
         200:
           content:

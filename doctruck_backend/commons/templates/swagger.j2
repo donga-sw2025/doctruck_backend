@@ -43,7 +43,19 @@
           plugins: [
             SwaggerUIBundle.plugins.DownloadUrl
           ],
-          layout: "StandaloneLayout"
+          layout: "StandaloneLayout",
+          // curl 명령에서 단일 따옴표 사용하도록 설정
+          requestSnippetsEnabled: true,
+          requestSnippets: {
+            generators: {
+              curl_bash: {
+                title: "cURL (bash)",
+                syntax: "bash"
+              }
+            },
+            defaultExpanded: true,
+            languages: null
+          }
         });
       };
     </script>
