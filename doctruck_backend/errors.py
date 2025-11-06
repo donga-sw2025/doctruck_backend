@@ -6,7 +6,7 @@ Spring의 @ControllerAdvice와 유사한 패턴입니다.
 
 import logging
 from flask import jsonify
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, BadRequest
 from flask_jwt_extended.exceptions import (
     NoAuthorizationError,
     InvalidHeaderError,
@@ -33,6 +33,29 @@ def register_error_handlers(app, jwt):
         """모든 HTTP 예외에 대한 기본 핸들러"""
         response = {"error": e.name, "msg": e.description, "status_code": e.code}
         return jsonify(response), e.code
+
+    @app.errorhandler(400)
+    def handle_bad_request(e):
+        """400 Bad Request - JSON 파싱 오류 등"""
+        # JSON 파싱 오류 감지
+        error_msg = str(e.description) if e.description else "Bad request"
+
+        # 더 명확한 에러 메시지
+        if "JSON" in error_msg or "decode" in error_msg.lower():
+            return (
+                jsonify({
+                    "error": "Invalid JSON",
+                    "msg": "잘못된 JSON 형식입니다. 역슬래시(\\)를 제거하고 단일 따옴표를 사용하세요.",
+                    "details": error_msg,
+                    "example": "curl -d '{\"username\":\"testuser\",\"password\":\"testpass123\"}'"
+                }),
+                400,
+            )
+
+        return (
+            jsonify({"error": "Bad Request", "msg": error_msg}),
+            400,
+        )
 
     @app.errorhandler(404)
     def handle_not_found(e):
