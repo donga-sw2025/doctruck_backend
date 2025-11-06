@@ -62,6 +62,38 @@ def register_blueprints(app):
     """Register all blueprints for application"""
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(api.views.blueprint)
+    register_health_check(app)
+
+
+def register_health_check(app):
+    """Register health check endpoint for Docker healthcheck"""
+
+    @app.route("/health", methods=["GET"])
+    def health_check():
+        """
+        Docker 헬스 체크용 엔드포인트
+        인증 없이 접근 가능하며, 컨테이너의 건강 상태를 확인합니다.
+
+        ---
+        get:
+          tags:
+            - health
+          summary: 헬스 체크
+          description: 컨테이너가 정상적으로 동작하는지 확인하는 엔드포인트
+          responses:
+            200:
+              description: 서버가 정상 동작 중
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: healthy
+          security: []
+        """
+        return {"status": "healthy"}, 200
 
 
 def init_celery(app=None):
