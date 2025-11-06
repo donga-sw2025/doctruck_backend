@@ -5,7 +5,10 @@
       "Bash(docker-compose build:*)",
       "Bash(docker-compose up:*)",
       "Bash(docker-compose ps:*)",
-      "Bash(docker-compose logs:*)"
+      "Bash(docker-compose logs:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MjM5Mjk0NywianRpIjoiOTMyNzM3YzQtYWMxMy00NmMyLWFmOWItOTU0ODdjZGY3NTljIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzYyMzkyOTQ3LCJjc3JmIjoiZGY2NDhiOTQtYjYxNS00MGRhLTg5MTQtMmZiZGI5YjMwNDA4IiwiZXhwIjoxNzYyMzkzODQ3fQ.PwPDPNfplNS612Ofgsnbd9REM3jPLjMLqAhE2dAPAGY\")"
     ],
     "deny": [],
     "ask": []

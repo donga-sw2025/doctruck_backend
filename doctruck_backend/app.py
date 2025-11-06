@@ -6,6 +6,7 @@ from doctruck_backend.extensions import apispec
 from doctruck_backend.extensions import db
 from doctruck_backend.extensions import jwt
 from doctruck_backend.extensions import migrate, celery
+from doctruck_backend.errors import register_error_handlers
 
 
 def create_app(testing=False):
@@ -20,6 +21,7 @@ def create_app(testing=False):
     configure_cli(app)
     configure_apispec(app)
     register_blueprints(app)
+    register_error_handlers(app, jwt)
     init_celery(app)
 
     return app
