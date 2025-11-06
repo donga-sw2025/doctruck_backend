@@ -43,12 +43,14 @@ def register_error_handlers(app, jwt):
         # 더 명확한 에러 메시지
         if "JSON" in error_msg or "decode" in error_msg.lower():
             return (
-                jsonify({
-                    "error": "Invalid JSON",
-                    "msg": "잘못된 JSON 형식입니다. 역슬래시(\\)를 제거하고 단일 따옴표를 사용하세요.",
-                    "details": error_msg,
-                    "example": "curl -d '{\"username\":\"testuser\",\"password\":\"testpass123\"}'"
-                }),
+                jsonify(
+                    {
+                        "error": "Invalid JSON",
+                        "msg": "잘못된 JSON 형식입니다. 역슬래시(\\)를 제거하고 단일 따옴표를 사용하세요.",
+                        "details": error_msg,
+                        "example": 'curl -d \'{"username":"testuser","password":"testpass123"}\'',
+                    }
+                ),
                 400,
             )
 
