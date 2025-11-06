@@ -10,7 +10,6 @@ services:
     volumes:
       - ./db:/db
       - ./logs:/logs
-      - ./migrations:/code/migrations
     ports:
       - "5000:5000"
     depends_on:
