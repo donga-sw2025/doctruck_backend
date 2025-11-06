@@ -53,15 +53,20 @@ def seed_dummy_data(clear):
 
     if clear:
         click.echo("Clearing existing data...")
-        FoodTruckLocation.query.delete()
-        DocumentLocation.query.delete()
-        Document.query.delete()
-        FoodTruck.query.delete()
-        Location.query.delete()
-        Admin.query.delete()
-        User.query.delete()
-        db.session.commit()
-        click.echo("Existing data cleared!")
+        try:
+            FoodTruckLocation.query.delete()
+            DocumentLocation.query.delete()
+            Document.query.delete()
+            FoodTruck.query.delete()
+            Location.query.delete()
+            Admin.query.delete()
+            User.query.delete()
+            db.session.commit()
+            click.echo("Existing data cleared!")
+        except Exception as e:
+            db.session.rollback()
+            click.echo(f"Note: Could not clear data (tables may not exist yet): {e}")
+            click.echo("Continuing with seeding...")
 
     # 1. Create 1 User and 1 Admin
     click.echo("Creating User and Admin...")
