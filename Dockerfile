@@ -17,6 +17,6 @@ RUN pip install -r requirements.txt
 RUN pip install -e .
 
 COPY doctruck_backend doctruck_backend/
-# COPY migrations migrations/  # migrations는 flask db init으로 생성됨
+COPY migrations migrations/
 
 EXPOSE 5000

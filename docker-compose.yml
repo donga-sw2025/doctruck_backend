@@ -14,6 +14,7 @@ services:
       - CELERY_RESULT_BACKEND_URL=redis://redis
     volumes:
       - ./doctruck_backend:/code/doctruck_backend
+      - ./migrations:/code/migrations
       - ./db/:/db/
     ports:
       - "5000:5000"
