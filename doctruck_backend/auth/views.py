@@ -1,3 +1,4 @@
+import logging
 from flask import request, jsonify, Blueprint, current_app as app
 from flask_jwt_extended import (
     create_access_token,
@@ -14,6 +15,8 @@ from doctruck_backend.auth.helpers import (
     is_token_revoked,
     add_token_to_database,
 )
+
+logger = logging.getLogger(__name__)
 
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -65,25 +68,53 @@ def login():
           description: 잘못된 요청
       security: []
     """
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+    try:
+        if not request.is_json:
+            logger.warning("Login attempt with non-JSON request")
+            return jsonify({"msg": "Missing JSON in request"}), 400
 
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-    if not username or not password:
-        return jsonify({"msg": "Missing username or password"}), 400
+        username = request.json.get("username", None)
+        password = request.json.get("password", None)
 
-    user = User.query.filter_by(username=username).first()
-    if user is None or not pwd_context.verify(password, user.password):
-        return jsonify({"msg": "Bad credentials"}), 400
+        if not username or not password:
+            logger.warning(
+                f"Login attempt with missing credentials: "
+                f"username={bool(username)}, password={bool(password)}"
+            )
+            return jsonify({"msg": "Missing username or password"}), 400
 
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
-    add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
-    add_token_to_database(refresh_token, app.config["JWT_IDENTITY_CLAIM"])
+        logger.info(f"Login attempt for username: {username}")
 
-    ret = {"access_token": access_token, "refresh_token": refresh_token}
-    return jsonify(ret), 200
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            logger.warning(f"Login failed: user not found - {username}")
+            return jsonify({"msg": "Bad credentials"}), 400
+
+        if not pwd_context.verify(password, user.password):
+            logger.warning(f"Login failed: invalid password for user - {username}")
+            return jsonify({"msg": "Bad credentials"}), 400
+
+        logger.info(f"User authenticated successfully: {username} (id={user.id})")
+
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+
+        logger.debug(f"Tokens created for user {user.id}, adding to database")
+        add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
+        add_token_to_database(refresh_token, app.config["JWT_IDENTITY_CLAIM"])
+
+        logger.info(f"Login successful for user: {username}")
+        ret = {"access_token": access_token, "refresh_token": refresh_token}
+        return jsonify(ret), 200
+
+    except Exception as e:
+        username_val = username if "username" in locals() else "unknown"
+        logger.error(
+            f"Unexpected error during login for username={username_val}: "
+            f"{type(e).__name__}: {str(e)}",
+            exc_info=True,
+        )
+        raise
 
 
 @blueprint.route("/refresh", methods=["POST"])

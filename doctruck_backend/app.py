@@ -1,4 +1,6 @@
-from flask import Flask
+import logging
+import time
+from flask import Flask, request, g
 from doctruck_backend import api
 from doctruck_backend import auth
 from doctruck_backend import manage
@@ -17,14 +19,41 @@ def create_app(testing=False):
     if testing is True:
         app.config["TESTING"] = True
 
+    configure_logging(app)
     configure_extensions(app)
     configure_cli(app)
     configure_apispec(app)
     register_blueprints(app)
     register_error_handlers(app, jwt)
+    register_request_logging(app)
     init_celery(app)
 
     return app
+
+
+def configure_logging(app):
+    """Configure application logging"""
+    # 기본 로깅 레벨 설정
+    if app.debug:
+        log_level = logging.DEBUG
+    else:
+        log_level = logging.INFO
+
+    # Flask 앱 로거 설정
+    app.logger.setLevel(log_level)
+
+    # 콘솔 핸들러 추가 (gunicorn에서 stdout으로 출력)
+    if not app.logger.handlers:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(log_level)
+        formatter = logging.Formatter(
+            "[%(asctime)s] %(levelname)s in %(module)s: %(message)s"
+        )
+        console_handler.setFormatter(formatter)
+        app.logger.addHandler(console_handler)
+
+    # 다른 모듈의 로거도 동일한 레벨로 설정
+    logging.getLogger("doctruck_backend").setLevel(log_level)
 
 
 def configure_extensions(app):
@@ -63,6 +92,65 @@ def register_blueprints(app):
     app.register_blueprint(auth.views.blueprint)
     app.register_blueprint(api.views.blueprint)
     register_health_check(app)
+
+
+def register_request_logging(app):
+    """Register request/response logging middleware"""
+    logger = logging.getLogger(__name__)
+
+    @app.before_request
+    def log_request_info():
+        """요청 시작 시 로깅"""
+        # 요청 시작 시간 저장
+        g.start_time = time.time()
+
+        # 헬스체크는 로깅하지 않음 (노이즈 방지)
+        if request.path == "/health":
+            return
+
+        # 요청 정보 로깅
+        logger.info(
+            f"REQUEST: {request.method} {request.path} "
+            f"from {request.remote_addr} "
+            f"User-Agent: {request.headers.get('User-Agent', 'N/A')}"
+        )
+
+        # 요청 바디 로깅 (민감한 정보는 마스킹)
+        if request.is_json and request.method in ["POST", "PUT", "PATCH"]:
+            try:
+                data = request.get_json()
+                # 비밀번호 필드 마스킹
+                if isinstance(data, dict):
+                    safe_data = data.copy()
+                    for key in ["password", "old_password", "new_password"]:
+                        if key in safe_data:
+                            safe_data[key] = "***MASKED***"
+                    logger.debug(f"REQUEST BODY: {safe_data}")
+            except Exception:
+                pass
+
+    @app.after_request
+    def log_response_info(response):
+        """응답 전송 전 로깅"""
+        # 헬스체크는 로깅하지 않음
+        if request.path == "/health":
+            return response
+
+        # 요청 처리 시간 계산
+        if hasattr(g, "start_time"):
+            elapsed = time.time() - g.start_time
+            elapsed_ms = round(elapsed * 1000, 2)
+        else:
+            elapsed_ms = 0
+
+        # 응답 정보 로깅
+        logger.info(
+            f"RESPONSE: {request.method} {request.path} "
+            f"Status={response.status_code} "
+            f"Time={elapsed_ms}ms"
+        )
+
+        return response
 
 
 def register_health_check(app):
