@@ -1,4 +1,5 @@
 """Seed dummy data for development and testing"""
+
 import random
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -194,9 +195,11 @@ def seed_dummy_data(clear):
             verified_by_admin_id=admin.admin_id if random.random() > 0.3 else None,
             published_at=datetime.now().date() - timedelta(days=random.randint(1, 60)),
             expires_at=datetime.now().date() + timedelta(days=random.randint(30, 365)),
-            verified_at=random_date(start_days_ago=5, end_days_ahead=0)
-            if random.random() > 0.3
-            else None,
+            verified_at=(
+                random_date(start_days_ago=5, end_days_ahead=0)
+                if random.random() > 0.3
+                else None
+            ),
         )
         db.session.add(doc)
         documents.append(doc)
@@ -251,7 +254,7 @@ def seed_dummy_data(clear):
 
     click.echo("\n✅ Dummy data seeded successfully!")
     click.echo(
-        f"""
+        """
 Summary:
   - Users: 1 (testuser)
   - Admins: 1 (admin@example.com)

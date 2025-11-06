@@ -199,6 +199,59 @@ nano .env.production
 docker-compose -f docker-compose.prod.yml restart
 ```
 
+### 4.5 더미 데이터 생성 (개발/테스트용)
+
+테스트를 위한 더미 데이터를 자동으로 생성할 수 있습니다.
+
+#### 더미 데이터 생성 (기존 데이터 유지)
+
+```bash
+cd ~/doctruck_backend
+docker-compose -f docker-compose.prod.yml exec web flask seed
+```
+
+#### 기존 데이터 삭제 후 더미 데이터 생성
+
+```bash
+cd ~/doctruck_backend
+docker-compose -f docker-compose.prod.yml exec web flask seed --clear
+```
+
+#### 생성되는 더미 데이터
+
+- **User**: 1개
+  - Username: `testuser`
+  - Password: `testpass123`
+  - Email: `test@test.com`
+
+- **Admin**: 1개
+  - Email: `admin@example.com`
+  - Password: `admin123`
+
+- **FoodTruck**: 10개 (한식, 중식, 일식, 양식, 디저트, 음료, 분식, 치킨, 피자, 햄버거)
+- **Location**: 10개 (여의도 한강공원, 강남역 광장, 홍대 거리 등)
+- **Document**: 10개 (다양한 공문서 - 공고/규정/행사)
+- **DocumentLocation**: 10개 (문서-위치 연결)
+- **FoodTruckLocation**: 10개 (푸드트럭-위치 신청 관계, 다양한 상태)
+
+#### 로그인 테스트
+
+더미 데이터 생성 후 API 테스트:
+
+```bash
+# 사용자 로그인 테스트
+curl -X POST http://localhost:5000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"testpass123"}'
+
+# 관리자 로그인 테스트
+curl -X POST http://localhost:5000/auth/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@example.com","password":"admin123"}'
+```
+
+**⚠️ 주의**: `--clear` 옵션은 모든 기존 데이터를 삭제하므로 프로덕션 환경에서 사용 시 주의하세요!
+
 ## 5. 트러블슈팅
 
 ### 배포 실패 시
