@@ -84,7 +84,13 @@ def seed_dummy_data(clear):
         db.session.add(user)
         click.echo("  - Created user: testuser")
     else:
-        click.echo("  - User testuser already exists")
+        # 기존 사용자의 패스워드를 업데이트 (clear 옵션 사용 시 일관성 보장)
+        user.password = "testpass123"
+        user.email = "test@test.com"
+        user.active = True
+        user.name = "테스트 사용자"
+        user.phone_number = "010-1234-5678"
+        click.echo("  - User testuser already exists, updated password")
 
     admin = Admin.query.filter_by(email="admin@example.com").first()
     if not admin:
@@ -97,7 +103,11 @@ def seed_dummy_data(clear):
         db.session.add(admin)
         click.echo("  - Created admin: admin@example.com")
     else:
-        click.echo("  - Admin already exists")
+        # 기존 관리자의 패스워드를 업데이트 (clear 옵션 사용 시 일관성 보장)
+        admin.password = "admin123"
+        admin.name = "관리자"
+        admin.active = True
+        click.echo("  - Admin already exists, updated password")
 
     db.session.commit()
 
