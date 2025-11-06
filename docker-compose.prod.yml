@@ -29,11 +29,9 @@ services:
     image: rabbitmq:3-management
     ports:
       - "15672:15672"  # Management UI (optional, remove in production)
-    env_file:
-      - .env.production
     environment:
       - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-changeme}
+      - RABBITMQ_DEFAULT_PASS=admin
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
